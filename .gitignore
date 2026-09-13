@@ -1,0 +1,12 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+*.aiff
+*.zip
+packaging/icon.iconset/
+.DS_Store

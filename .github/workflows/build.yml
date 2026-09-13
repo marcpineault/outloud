@@ -1,0 +1,61 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            label: mac-arm64
+          - os: windows-latest
+            label: windows-x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python -m pip install --upgrade pip && pip install -e ".[dev]"
+      - name: Windows OCR engine (best effort, wheels lag new Pythons)
+        if: runner.os == 'Windows'
+        run: pip install winocr || echo "winocr not installable on this Python; OCR falls back at runtime"
+        shell: bash
+      - name: Test
+        run: python -m pytest -q
+      - name: Build app
+        run: pyinstaller --noconfirm packaging/OutLoud.spec
+      - name: Zip (mac)
+        if: runner.os == 'macOS'
+        run: ditto -c -k --sequesterRsrc --keepParent dist/OutLoud.app OutLoud-${{ matrix.label }}.zip
+      - name: Zip (windows)
+        if: runner.os == 'Windows'
+        run: Compress-Archive -Path dist/OutLoud -DestinationPath OutLoud-${{ matrix.label }}.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OutLoud-${{ matrix.label }}
+          path: OutLoud-${{ matrix.label }}.zip
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*.zip
+          generate_release_notes: true
