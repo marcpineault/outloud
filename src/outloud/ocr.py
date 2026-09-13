@@ -102,7 +102,14 @@ def _windows_native(image) -> str:
         import winocr
     except ImportError as exc:
         raise OCRUnavailable(f"winocr missing: {exc}")
-    result = asyncio.run(winocr.recognize_pil(image.convert("RGB"), "en"))
+    rgb = image.convert("RGB")
+
+    async def _run():
+        # Older winocr returns a coroutine, newer winrt builds return an awaitable
+        # IAsyncOperation; awaiting inside a coroutine handles both.
+        return await winocr.recognize_pil(rgb, "en")
+
+    result = asyncio.run(_run())
     lines = getattr(result, "lines", None)
     if lines:
         return "\n".join(getattr(line, "text", str(line)) for line in lines)
