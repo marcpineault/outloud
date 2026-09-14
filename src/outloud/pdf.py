@@ -10,8 +10,17 @@ where it is printed and a click on the page can be turned into a sentence.
 """
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass
 from typing import Iterable, List, Optional, Tuple
+
+if sys.platform == "win32":
+    # On Windows, MuPDF loaded before Qt crashes the process with an access violation
+    # (conflicting DLLs). Loading Qt first is harmless everywhere; see AGENTS.md.
+    try:
+        import PySide6.QtCore  # noqa: F401
+    except ImportError:
+        pass
 
 try:
     import pymupdf as fitz

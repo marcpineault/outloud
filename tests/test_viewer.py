@@ -1,11 +1,8 @@
-import os
-
-os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-
-import pymupdf
 import pytest
 from PySide6.QtCore import QPointF
 from PySide6.QtWidgets import QApplication
+
+import pymupdf  # after Qt: see conftest.py
 
 from outloud.pdf import PdfDocument
 from outloud.viewer import PdfViewer

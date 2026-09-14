@@ -52,6 +52,7 @@ run-mac.command, run-windows.bat   double-click launchers for running from sourc
 - `screencapture` without Screen Recording permission returns the wallpaper only, so OCR finds nothing. The status message tells the user what to grant.
 - pynput's listener on macOS starts "successfully" even without permission and just hears nothing. `hotkeys.mac_permissions` preflights with `CGPreflightListenEventAccess` / `CGPreflightPostEventAccess`.
 - winocr on new Windows builds returns an `IAsyncOperation`, not a coroutine; `await` it inside an `async def`.
+- **Windows import order:** importing PyMuPDF before PySide6 crashes the process (access violation from conflicting DLLs). `pdf.py` imports `PySide6.QtCore` first on Windows and `tests/conftest.py` does the same for the test run. Keep it that way.
 - PyInstaller: the `.app` is unsigned. Users need Privacy & Security > Open Anyway once. Signing/notarizing needs an Apple Developer account (not set up).
 
 ## Testing and releasing
