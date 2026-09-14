@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "outloud"
-version = "0.1.0"
+version = "0.2.0"
 description = "Reads PDFs and any text on your screen out loud. Mac first, Windows too. Works offline with the voices already on your computer."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -12,6 +12,7 @@ license = { text = "MIT" }
 authors = [{ name = "Marc Pineault" }]
 dependencies = [
   "pymupdf>=1.24",
+  "PySide6-Essentials>=6.7",
   "Pillow>=10",
   "pynput>=1.7.6",
   "pyobjc-framework-Vision>=10; sys_platform == 'darwin'",

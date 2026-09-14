@@ -31,6 +31,8 @@ jobs:
         shell: bash
       - name: Test
         run: python -m pytest -q
+        env:
+          QT_QPA_PLATFORM: offscreen
       - name: Build app
         run: pyinstaller --noconfirm packaging/OutLoud.spec
       - name: Zip (mac)

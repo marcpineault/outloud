@@ -8,7 +8,7 @@ from PyInstaller.utils.hooks import collect_submodules
 ROOT = os.path.dirname(SPECPATH)
 SRC = os.path.join(ROOT, "src")
 
-hidden = collect_submodules("outloud")
+hidden = collect_submodules("outloud") + ["PySide6.QtCore", "PySide6.QtGui", "PySide6.QtWidgets"]
 if sys.platform == "darwin":
     hidden += ["Vision", "Quartz", "Foundation", "objc"]
     icon = os.path.join(SPECPATH, "icon.icns")
@@ -26,7 +26,8 @@ a = Analysis(
     hiddenimports=hidden,
     hookspath=[],
     runtime_hooks=[],
-    excludes=["matplotlib", "numpy", "scipy", "pandas", "IPython", "jupyter"],
+    excludes=["matplotlib", "numpy", "scipy", "pandas", "IPython", "jupyter", "tkinter",
+              "PySide6.QtNetwork", "PySide6.QtQml", "PySide6.QtQuick", "PySide6.QtOpenGL", "PySide6.QtSql", "PySide6.QtTest", "PySide6.QtXml", "PySide6.QtDBus", "PySide6.QtSvg", "PySide6.QtConcurrent"],
     noarchive=False,
 )
 pyz = PYZ(a.pure)
@@ -51,7 +52,7 @@ if sys.platform == "darwin":
         icon=icon if os.path.exists(icon) else None,
         bundle_identifier="ca.pineault.outloud",
         info_plist={
-            "CFBundleShortVersionString": "0.1.0",
+            "CFBundleShortVersionString": "0.2.0",
             "NSHighResolutionCapable": True,
             "LSMinimumSystemVersion": "12.0",
             "CFBundleDocumentTypes": [
